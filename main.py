@@ -7,8 +7,8 @@ window.title("Крестики-нолики")
 window.geometry("300x350")
 
 current_player = "X"
-
 buttons = []
+game_over = False
 
 def check_winner():
     for i in range(3):
@@ -22,6 +22,12 @@ def check_winner():
         return True
     return False
 
+def check_draw():
+    for row in buttons:
+        for button in row:
+            if button["text"] == "":
+                return False
+    return True
 
 
 def on_click(row, col):
@@ -34,10 +40,20 @@ def on_click(row, col):
 
     if check_winner():
         messagebox.showinfo("Игра окончена", f"Игрок {current_player} победил!")
+        game_over = True
+    elif check_draw():
+        messagebox.showinfo("Игра окончена", f"Ничья!")
+        game_over = True
+    else:
+        current_player = "0" if current_player == "X" else "X"
 
-    current_player = "0" if current_player == "X" else "X"
-
-
+def reset_game():
+    global current_player, game_over
+    current_player = "X"
+    game_over = False
+    for row in buttons:
+        for button in row:
+            button["text"] = ""
 
 for i in range(3):
     row = []
@@ -46,5 +62,10 @@ for i in range(3):
         btn.grid(row=i, column=j)
         row.append(btn)
     buttons.append(row)
+
+reset_button = tk.Button(window, text="Сбросить игру", font=("Arial", 14), command=reset_game)
+reset_button.grid(row=3, column=0, columnspan=3, sticky="ew")
+
+
 
 window.mainloop()
